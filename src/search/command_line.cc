@@ -44,6 +44,7 @@ static int parse_int_arg(const string &name, const string &value) {
 static shared_ptr<SearchEngine> parse_cmd_line_aux(
     const vector<string> &args, options::Registry &registry, bool dry_run) {
     string plan_filename = "sas_plan";
+    string failed_plans_filename = "";
     int num_previously_generated_plans = 0;
     bool is_part_of_anytime_portfolio = false;
     options::Predefinitions predefinitions;
@@ -113,6 +114,11 @@ static shared_ptr<SearchEngine> parse_cmd_line_aux(
             registry.handle_predefinition(arg.substr(2),
                                           sanitize_arg_string(args[i]),
                                           predefinitions, dry_run);
+        } else if (arg == "--failed-plans-file"){
+            if (is_last)
+                throw ArgError("missing argument after --failed-plans-file");
+            ++i;
+            failed_plans_filename = args[i];
         } else {
             throw ArgError("unknown option " + arg);
         }
@@ -121,6 +127,7 @@ static shared_ptr<SearchEngine> parse_cmd_line_aux(
     if (engine) {
         PlanManager &plan_manager = engine->get_plan_manager();
         plan_manager.set_plan_filename(plan_filename);
+        plan_manager.set_failed_plans_filename(failed_plans_filename);
         plan_manager.set_num_previously_generated_plans(num_previously_generated_plans);
         plan_manager.set_is_part_of_anytime_portfolio(is_part_of_anytime_portfolio);
     }

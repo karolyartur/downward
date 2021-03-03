@@ -53,6 +53,10 @@ def run_translate(args):
         args.translate_time_limit, args.overall_time_limit)
     memory_limit = limits.get_memory_limit(
         args.translate_memory_limit, args.overall_memory_limit)
+    if time_limit == 0:
+        time_limit = None
+    if memory_limit == 0:
+        memory_limit = None
     translate = get_executable(args.build, REL_TRANSLATE_PATH)
     assert sys.executable, "Path to interpreter could not be found"
     cmd = [sys.executable] + [translate] + args.translate_inputs + args.translate_options
@@ -101,6 +105,11 @@ def run_search(args):
         args.search_memory_limit, args.overall_memory_limit)
     executable = get_executable(args.build, REL_SEARCH_PATH)
 
+    if time_limit == 0:
+        time_limit = None
+    if memory_limit == 0:
+        memory_limit = None
+
     plan_manager = PlanManager(
         args.plan_file,
         portfolio_bound=args.portfolio_bound,
@@ -117,6 +126,8 @@ def run_search(args):
         if not args.search_options:
             returncodes.exit_with_driver_input_error(
                 "search needs --alias, --portfolio, or search options")
+        if not args.failed_plans_file == "":
+            args.search_options.extend(["--failed-plans-file", args.failed_plans_file])
         if "--help" not in args.search_options:
             args.search_options.extend(["--internal-plan-file", args.plan_file])
         try:

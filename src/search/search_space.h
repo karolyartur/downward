@@ -57,6 +57,7 @@ public:
                     std::vector<OperatorID> &path) const;
 
     void dump(const TaskProxy &task_proxy) const;
+    std::string state_creating_operator_name(const State &state, const TaskProxy &task_proxy);
     void print_statistics() const;
 };
 

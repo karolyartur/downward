@@ -110,6 +110,7 @@ void EagerSearch::print_statistics() const {
 
 SearchStatus EagerSearch::step() {
     tl::optional<SearchNode> node;
+    bool is_failed_state = false;
     while (true) {
         if (open_list->empty()) {
             utils::g_log << "Completely explored state space -- no solution!" << endl;
@@ -158,6 +159,31 @@ SearchStatus EagerSearch::step() {
                     open_list->insert(eval_context, id);
                     continue;
                 }
+            }
+
+            for (vector<string> failed_plan : plan_manager.failed_plans) {
+                if (search_space.state_creating_operator_name(s, task_proxy) ==  failed_plan[failed_plan.size()-1]) {
+                    Plan trace;
+                    search_space.trace_path(s, trace);
+                    if (trace.size() == failed_plan.size()) {
+                        is_failed_state = true;
+                        for (unsigned int i = 0; i < trace.size(); i++) {
+                            if (failed_plan[i] != task_proxy.get_operators()[trace[i]].get_name()) {
+                                is_failed_state = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (is_failed_state) {
+                        break;
+                    }
+                }
+            }
+
+            if (is_failed_state) {
+                node->mark_as_dead_end();
+                is_failed_state = false;
+                continue;
             }
         }
 

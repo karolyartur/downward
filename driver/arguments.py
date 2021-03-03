@@ -398,6 +398,13 @@ def parse_args():
         "--sas-file", metavar="FILE",
         help="intermediate file for storing the translator output "
             "(implies --keep-sas-file, default: {})".format(DEFAULT_SAS_FILE))
+
+    driver_other.add_argument(
+       "--failed-plans-file",  metavar="FILE", default = "",
+       help="input file containing the previous plans that failed during the motion planning phase"
+       "the plans are separated by the '=====' string, and the failing stage in each plan is marked with '\%\%\%'"
+       "(default: %(default)s) the default value is ignored"
+    )
     driver_other.add_argument(
         "--keep-sas-file", action="store_true",
         help="keep translator output file (implied by --sas-file, default: "

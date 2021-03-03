@@ -11,12 +11,18 @@ using Plan = std::vector<OperatorID>;
 
 class PlanManager {
     std::string plan_filename;
+    std::string failed_plans_filename;
     int num_previously_generated_plans;
     bool is_part_of_anytime_portfolio;
+
+    void parse_failed_plans();
 public:
     PlanManager();
 
+    std::vector<std::vector<std::string>> failed_plans;
+
     void set_plan_filename(const std::string &plan_filename);
+    void set_failed_plans_filename(const std::string &failed_plans_filename);
     void set_num_previously_generated_plans(int num_previously_generated_plans);
     void set_is_part_of_anytime_portfolio(bool is_part_of_anytime_portfolio);
 

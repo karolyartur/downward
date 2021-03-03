@@ -160,6 +160,17 @@ void SearchSpace::dump(const TaskProxy &task_proxy) const {
     }
 }
 
+string SearchSpace::state_creating_operator_name(const State &state, const TaskProxy &task_proxy){
+    string name = "";
+    OperatorsProxy operators = task_proxy.get_operators();
+    const SearchNodeInfo &node_info = search_node_infos[state];
+    if (node_info.creating_operator != OperatorID::no_operator){
+        OperatorProxy op = operators[node_info.creating_operator.get_index()];
+        name = op.get_name();
+    }
+    return name;
+}
+
 void SearchSpace::print_statistics() const {
     state_registry.print_statistics();
 }
